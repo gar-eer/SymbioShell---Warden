@@ -7,7 +7,7 @@ from .parser import BashParser, ParsedCommand
 from .blocklist import BlocklistChecker
 from .classifier import CommandClassifier, CommandState
 from .permissions import PermissionChecker
-
+#Sandbox is the main orchestrator
 class SandboxDecision(Enum):
     ALLOW = "ALLOW"
     BLOCK = "BLOCK"  # Blocked by blocklist (dangerous)
