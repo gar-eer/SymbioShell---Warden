@@ -46,16 +46,18 @@ class SemanticSandbox:
     Combines Telemetry, Bash Parsing, Blocklist Checking, State Modification Classification,
     and Target File Permission verification.
     """
-
+    #collect and create telemetry result here
     def __init__(self, target_shell: str = "/bin/bash"):
         self.telemetry_collector = TelemetryCollector(target_shell=target_shell)
 
+    #put it in an object
     def get_telemetry_context(self, custom_cwd: Optional[str] = None) -> TelemetryData:
         """
         Returns active environment telemetry object.
         """
         return self.telemetry_collector.collect(custom_cwd=custom_cwd)
 
+    #convert into a string and return it to llm
     def get_telemetry_prompt_string(self, custom_cwd: Optional[str] = None) -> str:
         """
         Returns telemetry prompt string for LLM injection:
@@ -64,6 +66,7 @@ class SemanticSandbox:
         telemetry = self.get_telemetry_context(custom_cwd=custom_cwd)
         return telemetry.to_prompt_string()
 
+    
     def evaluate(self, command_str: str, custom_cwd: Optional[str] = None) -> SandboxResult:
         """
         Evaluates a bash command string against the Semantic Sandbox rules.
