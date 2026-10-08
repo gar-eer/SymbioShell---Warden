@@ -6,7 +6,7 @@ class CommandState(Enum):
     READ_ONLY = "READ_ONLY"
     WRITE = "WRITE"
     UNKNOWN = "UNKNOWN"
-
+#making a comment
 class CommandClassifier:
     """
     Classifies bash commands into READ_ONLY vs WRITE (state-modifying).
