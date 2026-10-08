@@ -8,11 +8,13 @@ from .blocklist import BlocklistChecker
 from .classifier import CommandClassifier, CommandState
 from .permissions import PermissionChecker
 
+#warden has 2 modes get_telemetry_prompt_string and evaluate
+
 class SandboxDecision(Enum):
     ALLOW = "ALLOW"
-    WARN = "WARN"    # Not too dangerous, but requires verification
-    BLOCK = "BLOCK"  # Blocked by blocklist (dangerous)
-    DENY = "DENY"    # Denied by permissions check
+    WARN = "WARN"         #at present warn is not being used anywhere, so it is most appropriate to be merged with DENY
+    BLOCK = "BLOCK"       # Blocked by blocklist (dangerous)
+    DENY = "WARN/DENY"    # Denied by permissions check
 
 @dataclass
 class SandboxResult:
@@ -61,12 +63,12 @@ class SemanticSandbox:
     def get_telemetry_prompt_string(self, custom_cwd: Optional[str] = None) -> str:
         """
         Returns telemetry prompt string for LLM injection:
-        USER: root, CWD: /var/log, OS: Ubuntu 22.04
+        eg. USER: root, CWD: /var/log, OS: Ubuntu 22.04
         """
         telemetry = self.get_telemetry_context(custom_cwd=custom_cwd)
         return telemetry.to_prompt_string()
+    #the above 3 functions, basically return the same thing over and over, idk why
 
-    
     def evaluate(self, command_str: str, custom_cwd: Optional[str] = None) -> SandboxResult:
         """
         Evaluates a bash command string against the Semantic Sandbox rules.
@@ -97,6 +99,7 @@ class SemanticSandbox:
                 reason=block_reason or "Dangerous command prohibited by security policy.",
                 errors=[block_reason] if block_reason else [],
                 telemetry=telemetry
+                #how would u override it if needed? 
             )
 
         # 2. State Modification Classification (Read-Only vs Write)
@@ -121,6 +124,7 @@ class SemanticSandbox:
                 errors=perm_errors,
                 telemetry=telemetry,
                 target_paths=target_paths
+                #in this case, how do u handle the error? 
             )
 
         # Passed all security layers
@@ -135,3 +139,5 @@ class SemanticSandbox:
             telemetry=telemetry,
             target_paths=target_paths
         )
+
+#warden is pretty much good, except that custom_cwd still unsure as to if we need it or not
